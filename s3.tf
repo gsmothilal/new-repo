@@ -1,4 +1,12 @@
 ########################################
+# Random Suffix (to avoid name conflicts)
+########################################
+
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
+########################################
 # S3 Log Archive Bucket (COBL-006 Item 2)
 ########################################
 
@@ -99,7 +107,8 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
 ########################################
 
 resource "aws_cloudtrail" "trail" {
-  name                          = "cobl-006-cloudtrail"
+  name = "cobl-006-cloudtrail-${random_id.suffix.hex}"
+
   s3_bucket_name                = aws_s3_bucket.log_bucket.bucket
   is_multi_region_trail         = true
   include_global_service_events = true
@@ -114,6 +123,7 @@ resource "aws_cloudtrail" "trail" {
 ########################################
 
 resource "aws_cloudwatch_log_group" "logs" {
-  name              = "/cobl-006/application-logs"
+  name = "/cobl-006/application-logs-${random_id.suffix.hex}"
+
   retention_in_days = var.cloudwatch_retention_days
 }
